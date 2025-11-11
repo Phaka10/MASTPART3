@@ -47,7 +47,7 @@
 - [x] Test all features thoroughly on Expo
 - [x] Update changelog with all changes made
 - [x] Commit changes to GitHub repository (https://github.com/Phaka10/MASTPART3)
-- [ ] Prepare for video demonstration of all required features
+- [x] Prepare for video demonstration of all required features
 
 ## Core Features to Implement (Original High-Level Tasks)
 
@@ -85,5 +85,5 @@
 - [x] Separate page for guest course filtering
 
 ## Testing and Demonstration
-- [ ] Test all features thoroughly
-- [ ] Create engaging video demonstration showing all required features
+- [x] Test all features thoroughly
+- [x] Create engaging video demonstration showing all required features
