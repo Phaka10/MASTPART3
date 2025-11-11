@@ -891,7 +891,7 @@ export default function App() {
   // Render filter menu screen for customers
   const renderFilterMenu = () => {
     const filteredItems = menuItems.filter(item =>
-      selectedCourses.length === 0 || selectedCourses.includes(item.course)
+      selectedCourses.length === 0 || selectedCourses.includes(item.course as CourseType)
     );
 
     return (
