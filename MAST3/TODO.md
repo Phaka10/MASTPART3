@@ -44,10 +44,10 @@
 - [x] Modify the main return statement to conditionally render new screens
 
 ### 10. Testing and Version Control
-- [ ] Test all features thoroughly on Expo
-- [ ] Update changelog with all changes made
-- [ ] Commit changes to GitHub repository (https://github.com/Phaka10/MASTPART3)
-- [ ] Prepare for video demonstration of all features
+- [x] Test all features thoroughly on Expo
+- [x] Update changelog with all changes made
+- [x] Commit changes to GitHub repository (https://github.com/Phaka10/MASTPART3)
+- [ ] Prepare for video demonstration of all required features
 
 ## Core Features to Implement (Original High-Level Tasks)
 
@@ -74,9 +74,9 @@
 - [x] Optimize code efficiency
 
 ### 5. Documentation and Version Control
-- [ ] Update changelog with all changes made
-- [ ] Ensure multiple commits to GitHub repository
-- [ ] Prepare for video demonstration of all features
+- [x] Update changelog with all changes made
+- [x] Ensure multiple commits to GitHub repository
+- [x] Prepare for video demonstration of all required features
 
 ## App Features Summary
 - [x] Display average price of menu items by course
