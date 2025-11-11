@@ -913,11 +913,11 @@ export default function App() {
                       key={course.value}
                       mode={selectedCourses.includes(course.value) ? 'flat' : 'outlined'}
                       onPress={() => {
-                        setSelectedCourses(prev =>
-                          prev.includes(course.value)
-                            ? prev.filter(c => c !== course.value)
-                            : [...prev, course.value]
-                        );
+                        if (selectedCourses.includes(course.value)) {
+                          setSelectedCourses([]);
+                        } else {
+                          setSelectedCourses([course.value]);
+                        }
                       }}
                       style={styles.filterChip}
                       textStyle={{ color: selectedCourses.includes(course.value) ? customTheme.colors.onPrimary : customTheme.colors.onSurface }}
