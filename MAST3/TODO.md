@@ -28,6 +28,7 @@
 - [x] Add checkboxes or multi-select for courses
 - [x] Display filtered menu items
 - [x] Add back navigation to customer dashboard
+- [x] Fix filtering to show only selected course items (not all courses)
 
 ### 7. Add Remove Menu Item Functionality
 - [x] In renderMenuManagement, add remove button to each menu item
