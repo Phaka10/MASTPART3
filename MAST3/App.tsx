@@ -1,3 +1,22 @@
+/**
+ * Christoffel Cuisine - Restaurant Management App
+ *
+ * A comprehensive React Native application for restaurant management,
+ * featuring separate interfaces for chefs and customers with menu management,
+ * filtering, booking, and search capabilities.
+ *
+ * Features:
+ * - Role-based authentication (Chef/Customer)
+ * - Dynamic menu management with CRUD operations
+ * - Advanced filtering and search functionality
+ * - Table booking system with validation
+ * - Professional dark theme with gold accents
+ * - Responsive animations and user feedback
+ *
+ * @author AI Assistant
+ * @version 1.0.0
+ */
+
 import React, { useState, useEffect } from 'react';
 import {
   View,
@@ -18,6 +37,34 @@ import {
   Provider as PaperProvider,
   MD3DarkTheme,
 } from 'react-native-paper';
+
+// Define theme colors as constants for use in styles
+const themeColors = {
+  primary: '#FFD700', // Gold primary
+  onPrimary: '#000000', // Black text on gold
+  secondary: '#DAA520', // Goldenrod
+  onSecondary: '#000000',
+  tertiary: '#B8860B', // Dark goldenrod
+  onTertiary: '#FFFFFF',
+  background: '#121212', // Dark background
+  onBackground: '#FFFFFF',
+  surface: '#1e1e1e', // Slightly lighter surface
+  onSurface: '#E0E0E0', // Light grey text
+  surfaceVariant: '#2a2a2a',
+  onSurfaceVariant: '#CCCCCC',
+  outline: '#FFD700', // Gold outline
+  outlineVariant: '#DAA520',
+  error: '#CF6679',
+  onError: '#000000',
+  errorContainer: '#B3261E',
+  onErrorContainer: '#FFFFFF',
+  inverseSurface: '#E0E0E0',
+  inverseOnSurface: '#121212',
+  inversePrimary: '#000000',
+  shadow: '#000000',
+  scrim: '#000000',
+  surfaceTint: '#FFD700',
+};
 
 // Types
 interface MenuItem {
@@ -68,6 +115,7 @@ export default function App() {
 
   // Filtering state for customer filter menu
   const [selectedCourses, setSelectedCourses] = useState<CourseType[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Animations
   const [fadeAnim] = useState(new Animated.Value(0));
@@ -232,12 +280,24 @@ export default function App() {
       Alert.alert('Validation Error', 'Please enter a date');
       return false;
     }
+    // Enhanced date validation
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    if (!dateRegex.test(bookingDate.trim())) {
+      Alert.alert('Validation Error', 'Please enter date in YYYY-MM-DD format');
+      return false;
+    }
     if (!bookingTime.trim()) {
       Alert.alert('Validation Error', 'Please enter a time');
       return false;
     }
-    if (!partySize.trim() || isNaN(parseInt(partySize)) || parseInt(partySize) <= 0) {
-      Alert.alert('Validation Error', 'Please enter a valid party size');
+    // Enhanced time validation
+    const timeRegex = /^\d{2}:\d{2}$/;
+    if (!timeRegex.test(bookingTime.trim())) {
+      Alert.alert('Validation Error', 'Please enter time in HH:MM format');
+      return false;
+    }
+    if (!partySize.trim() || isNaN(parseInt(partySize)) || parseInt(partySize) <= 0 || parseInt(partySize) > 20) {
+      Alert.alert('Validation Error', 'Please enter a valid party size (1-20)');
       return false;
     }
     return true;
@@ -309,44 +369,36 @@ export default function App() {
     setShowAddForm(false);
     setShowBookingForm(false);
     setSelectedCourses([]);
+    setSearchQuery('');
     resetAddForm();
     resetBookingForm();
   };
 
-  // Handle remove menu item
+  // Handle remove menu item directly
   const handleRemoveMenuItem = (id: string) => {
-    Alert.alert(
-      'Remove Item',
-      'Are you sure you want to remove this menu item?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Remove',
-          style: 'destructive',
-          onPress: () => {
-            setMenuItems(prev => prev.filter(item => item.id !== id));
-            Alert.alert('Success', 'Menu item removed successfully!');
-          },
-        },
-      ]
-    );
+    const itemToRemove = menuItems.find(item => item.id === id);
+    if (!itemToRemove) {
+      Alert.alert('Error', 'Menu item not found.');
+      return;
+    }
+    setMenuItems(prev => prev.filter(item => item.id !== id));
+    Alert.alert('Success', 'Menu item removed successfully!');
   };
 
-  // Define the custom theme for React Native Paper
+  // Define the custom theme for React Native Paper with professional colors
   const customTheme = {
     ...MD3DarkTheme,
     colors: {
       ...MD3DarkTheme.colors,
-      primary: '#FFD700',
-      onPrimary: '#000000',
-      accent: '#DAA520',
-      background: '#121212',
-      surface: '#1e1e1e',
-      onSurface: '#CCCCCC',
-      text: '#CCCCCC',
-      placeholder: '#888888',
-      outline: '#FFD700',
-      notification: '#8BC34A',
+      ...themeColors,
+      elevation: {
+        level0: 'transparent',
+        level1: '#1e1e1e',
+        level2: '#222222',
+        level3: '#252525',
+        level4: '#272727',
+        level5: '#2a2a2a',
+      },
     },
   };
 
@@ -536,21 +588,23 @@ export default function App() {
         />
 
         <TextInput
-          label="Date (e.g., 2023-12-25)"
+          label="Date"
           value={bookingDate}
           onChangeText={setBookingDate}
           mode="outlined"
           style={styles.input}
           placeholder="YYYY-MM-DD"
+          keyboardType="numeric"
         />
 
         <TextInput
-          label="Time (e.g., 19:00)"
+          label="Time"
           value={bookingTime}
           onChangeText={setBookingTime}
           mode="outlined"
           style={styles.input}
           placeholder="HH:MM"
+          keyboardType="numeric"
         />
 
         <TextInput
@@ -890,9 +944,12 @@ export default function App() {
 
   // Render filter menu screen for customers
   const renderFilterMenu = () => {
-    const filteredItems = menuItems.filter(item =>
-      selectedCourses.length === 0 || selectedCourses.includes(item.course as CourseType)
-    );
+    const filteredItems = menuItems.filter(item => {
+      const matchesCourse = selectedCourses.length === 0 || selectedCourses.includes(item.course as CourseType);
+      const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                           item.description.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchesCourse && matchesSearch;
+    });
 
     return (
       <View style={[styles.container, { backgroundColor: customTheme.colors.background }]}>
@@ -907,25 +964,58 @@ export default function App() {
                   Select courses to view
                 </Text>
 
+                <TextInput
+                  label="Search menu items"
+                  value={searchQuery}
+                  onChangeText={setSearchQuery}
+                  mode="outlined"
+                  style={styles.searchInput}
+                  placeholder="Search by name or description"
+                  left={<TextInput.Icon icon="magnify" />}
+                />
+
                 <View style={styles.filterContainer}>
                   {courses.filter(course => course.value !== 'starters').map(course => (
                     <Chip
                       key={course.value}
                       mode={selectedCourses.includes(course.value) ? 'flat' : 'outlined'}
                       onPress={() => {
-                        if (selectedCourses.includes(course.value)) {
-                          setSelectedCourses([]);
-                        } else {
-                          setSelectedCourses([course.value]);
-                        }
+                        setSelectedCourses(prev => {
+                          if (prev.includes(course.value)) {
+                            return prev.filter(c => c !== course.value);
+                          } else {
+                            return [...prev, course.value];
+                          }
+                        });
                       }}
-                      style={styles.filterChip}
-                      textStyle={{ color: selectedCourses.includes(course.value) ? customTheme.colors.onPrimary : customTheme.colors.onSurface }}
+                      style={[
+                        styles.filterChip,
+                        selectedCourses.includes(course.value) && { backgroundColor: customTheme.colors.primary }
+                      ]}
+                      textStyle={{
+                        color: selectedCourses.includes(course.value)
+                          ? customTheme.colors.onPrimary
+                          : customTheme.colors.onSurface
+                      }}
                     >
                       {course.label}
                     </Chip>
                   ))}
                 </View>
+
+                {(selectedCourses.length > 0 || searchQuery) && (
+                  <Button
+                    mode="text"
+                    onPress={() => {
+                      setSelectedCourses([]);
+                      setSearchQuery('');
+                    }}
+                    style={styles.clearButton}
+                    icon="filter-remove"
+                  >
+                    Clear All Filters
+                  </Button>
+                )}
 
                 <View style={styles.buttonRow}>
                   <Button
@@ -988,13 +1078,12 @@ export default function App() {
                 );
               })
             ) : (
-              // Show only the selected course when filter is active
-              (() => {
-                const selectedCourse = selectedCourses[0];
+              // Show only the selected courses when filter is active
+              selectedCourses.map(selectedCourse => {
                 const courseItems = filteredItems.filter(item => item.course === selectedCourse);
 
                 return (
-                  <View style={styles.courseSection}>
+                  <View key={selectedCourse} style={styles.courseSection}>
                     <Text variant="titleLarge" style={styles.courseTitle}>
                       {courseLabels[selectedCourse]}
                     </Text>
@@ -1031,14 +1120,17 @@ export default function App() {
                     <Divider style={styles.courseDivider} />
                   </View>
                 );
-              })()
+              })
             )}
 
             {filteredItems.length === 0 && (
               <Card style={styles.emptyCard}>
                 <Card.Content>
                   <Text variant="bodyLarge" style={styles.emptyText}>
-                    No items match your filter. Try selecting different courses.
+                    {selectedCourses.length > 0 || searchQuery
+                      ? 'No items match your search or filter criteria. Try adjusting your filters.'
+                      : 'No menu items available at the moment.'
+                    }
                   </Text>
                 </Card.Content>
               </Card>
@@ -1082,7 +1174,7 @@ const styles = StyleSheet.create({
   title: {
     textAlign: 'center',
     fontWeight: 'bold',
-    color: '#FFD700', // Gold
+    color: themeColors.primary, // Use theme color
     marginBottom: 8,
   },
   formTitle: {
@@ -1124,7 +1216,7 @@ const styles = StyleSheet.create({
   restaurantName: {
     fontWeight: 'bold',
     textAlign: 'center',
-    color: '#FFD700', // Gold
+    color: themeColors.primary, // Use theme color
   },
   menuTitle: {
     textAlign: 'center',
@@ -1156,7 +1248,7 @@ const styles = StyleSheet.create({
   },
   courseTitle: {
     fontWeight: 'bold',
-    color: '#FFD700', // Gold
+    color: themeColors.primary, // Use theme color
     marginBottom: 12,
   },
   menuItemCard: {
@@ -1226,7 +1318,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontWeight: 'bold',
     marginBottom: 12,
-    color: '#FFD700', // Gold
+    color: themeColors.primary, // Use theme color
   },
   radioItem: {
     flexDirection: 'row',
@@ -1249,7 +1341,7 @@ const styles = StyleSheet.create({
   },
   averagesTitle: {
     fontWeight: 'bold',
-    color: '#FFD700',
+    color: themeColors.primary, // Use theme color
     marginBottom: 8,
     textAlign: 'center',
   },
@@ -1280,6 +1372,13 @@ const styles = StyleSheet.create({
   },
   filterChip: {
     margin: 4,
-    backgroundColor: '#FFD700',
+    borderColor: '#FFD700',
+  },
+  searchInput: {
+    marginBottom: 16,
+  },
+  clearButton: {
+    marginTop: 8,
+    marginBottom: 8,
   },
 });
