@@ -908,7 +908,7 @@ export default function App() {
                 </Text>
 
                 <View style={styles.filterContainer}>
-                  {courses.map(course => (
+                  {courses.filter(course => course.value !== 'starters').map(course => (
                     <Chip
                       key={course.value}
                       mode={selectedCourses.includes(course.value) ? 'flat' : 'outlined'}
