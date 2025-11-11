@@ -689,7 +689,7 @@ export default function App() {
                   Kings and Queens - Chef Dashboard
                 </Text>
                 <Text variant="titleMedium" style={styles.menuTitle}>
-                  Menu Management
+                  Manage Your Menu
                 </Text>
 
                 {/* Average Prices Display */}
