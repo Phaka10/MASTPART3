@@ -942,49 +942,97 @@ export default function App() {
 
             <Divider style={styles.divider} />
 
-            {courses.map(course => {
-              const courseItems = filteredItems.filter(item => item.course === course.value);
-              if (courseItems.length === 0) return null;
+            {selectedCourses.length === 0 ? (
+              // Show all courses when no filter is selected
+              courses.map(course => {
+                const courseItems = filteredItems.filter(item => item.course === course.value);
+                if (courseItems.length === 0) return null;
 
-              return (
-                <View key={course.value} style={styles.courseSection}>
-                  <Text variant="titleLarge" style={styles.courseTitle}>
-                    {courseLabels[course.value]}
-                  </Text>
+                return (
+                  <View key={course.value} style={styles.courseSection}>
+                    <Text variant="titleLarge" style={styles.courseTitle}>
+                      {courseLabels[course.value]}
+                    </Text>
 
-                  {courseItems.map((item) => (
-                    <Animated.View
-                      key={item.id}
-                      style={[
-                        styles.menuItemCard,
-                        { opacity: fadeAnim }
-                      ]}
-                    >
-                      <Card style={styles.itemCard}>
-                        <Card.Content style={styles.itemContent}>
-                          <Card.Cover source={{ uri: item.imageUrl }} style={styles.itemImage} />
-                          <View style={styles.itemTextContainer}>
-                            <View style={styles.itemHeader}>
-                              <Text variant="titleMedium" style={styles.itemName}>
-                                {item.name}
-                              </Text>
-                              <Text variant="titleMedium" style={styles.itemPrice}>
-                                R{item.price.toFixed(2)}
+                    {courseItems.map((item) => (
+                      <Animated.View
+                        key={item.id}
+                        style={[
+                          styles.menuItemCard,
+                          { opacity: fadeAnim }
+                        ]}
+                      >
+                        <Card style={styles.itemCard}>
+                          <Card.Content style={styles.itemContent}>
+                            <Card.Cover source={{ uri: item.imageUrl }} style={styles.itemImage} />
+                            <View style={styles.itemTextContainer}>
+                              <View style={styles.itemHeader}>
+                                <Text variant="titleMedium" style={styles.itemName}>
+                                  {item.name}
+                                </Text>
+                                <Text variant="titleMedium" style={styles.itemPrice}>
+                                  R{item.price.toFixed(2)}
+                                </Text>
+                              </View>
+                              <Text variant="bodyMedium" style={styles.itemDescription}>
+                                {item.description}
                               </Text>
                             </View>
-                            <Text variant="bodyMedium" style={styles.itemDescription}>
-                              {item.description}
-                            </Text>
-                          </View>
-                        </Card.Content>
-                      </Card>
-                    </Animated.View>
-                  ))}
+                          </Card.Content>
+                        </Card>
+                      </Animated.View>
+                    ))}
 
-                  <Divider style={styles.courseDivider} />
-                </View>
-              );
-            })}
+                    <Divider style={styles.courseDivider} />
+                  </View>
+                );
+              })
+            ) : (
+              // Show only the selected course when filter is active
+              (() => {
+                const selectedCourse = selectedCourses[0];
+                const courseItems = filteredItems.filter(item => item.course === selectedCourse);
+
+                return (
+                  <View style={styles.courseSection}>
+                    <Text variant="titleLarge" style={styles.courseTitle}>
+                      {courseLabels[selectedCourse]}
+                    </Text>
+
+                    {courseItems.map((item) => (
+                      <Animated.View
+                        key={item.id}
+                        style={[
+                          styles.menuItemCard,
+                          { opacity: fadeAnim }
+                        ]}
+                      >
+                        <Card style={styles.itemCard}>
+                          <Card.Content style={styles.itemContent}>
+                            <Card.Cover source={{ uri: item.imageUrl }} style={styles.itemImage} />
+                            <View style={styles.itemTextContainer}>
+                              <View style={styles.itemHeader}>
+                                <Text variant="titleMedium" style={styles.itemName}>
+                                  {item.name}
+                                </Text>
+                                <Text variant="titleMedium" style={styles.itemPrice}>
+                                  R{item.price.toFixed(2)}
+                                </Text>
+                              </View>
+                              <Text variant="bodyMedium" style={styles.itemDescription}>
+                                {item.description}
+                              </Text>
+                            </View>
+                          </Card.Content>
+                        </Card>
+                      </Animated.View>
+                    ))}
+
+                    <Divider style={styles.courseDivider} />
+                  </View>
+                );
+              })()
+            )}
 
             {filteredItems.length === 0 && (
               <Card style={styles.emptyCard}>
