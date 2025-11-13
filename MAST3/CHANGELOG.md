@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.1.0] - 2025-01-11
 
 ### Added
-- **Average Price Display**: Added average price calculations broken down by course (starters, mains, desserts, drinks) on both chef and customer home screens
+- **Average Price Display**: Added average price calculations broken down by course (mains, desserts, drinks) on both chef and customer home screens
 - **Menu Management Screen**: Created a dedicated screen for chefs to add and remove menu items, accessible via navigation button from chef dashboard
 - **Guest Filtering Feature**: Implemented a separate filter menu screen for customers to filter menu items by selected courses using interactive chips
 - **Remove Menu Item Functionality**: Added remove buttons to each menu item in the menu management screen with confirmation alerts

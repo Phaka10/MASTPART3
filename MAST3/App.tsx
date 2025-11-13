@@ -478,7 +478,7 @@ export default function App() {
                   <Text variant="titleMedium" style={styles.averagesTitle}>
                     Average Prices by Course:
                   </Text>
-                  {courses.map(course => (
+                  {courses.filter(course => course.value !== 'starters').map(course => (
                     <Text key={course.value} variant="bodyMedium" style={styles.averageText}>
                       {course.label}: R{averages[course.value].toFixed(2)}
                     </Text>
@@ -751,7 +751,7 @@ export default function App() {
                   <Text variant="titleMedium" style={styles.averagesTitle}>
                     Average Prices by Course:
                   </Text>
-                  {courses.map(course => (
+                  {courses.filter(course => course.value !== 'starters').map(course => (
                     <Text key={course.value} variant="bodyMedium" style={styles.averageText}>
                       {course.label}: R{averages[course.value].toFixed(2)}
                     </Text>
