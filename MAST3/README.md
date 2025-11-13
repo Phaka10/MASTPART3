@@ -898,3 +898,4 @@ const styles = StyleSheet.create({
   },
   // addButton color will be handled by theme.primary
 });
+# Christoffel Cuisine - Restaurant Management App
